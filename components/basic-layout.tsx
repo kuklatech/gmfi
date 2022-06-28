@@ -6,7 +6,8 @@ import Head from "next/head"
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Find organization", href: "/organizations" },
+  { name: "Organizations", href: "/organizations" },
+  { name: "Add organization", href: "/organizations/add" },
 ]
 const footerNavigation = {
   legal: [{ name: "Privacy", href: "/privacy-policy" }],
