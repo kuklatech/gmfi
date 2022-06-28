@@ -1,25 +1,39 @@
-import type { NextPage } from "next"
+import type { GetServerSideProps, NextPage } from "next"
 import { BasicLayout } from "../../components/basic-layout"
 import {
-  getOrganizationByName,
-  getVotesByOrganizationName,
+  getOrganizationById,
+  getVotesByOrganizationId,
   Organization,
   Vote,
 } from "../../src/db/organizations"
-import Link from "next/link"
 import { useForm } from "react-hook-form"
+import { useState } from "react"
+import axios from "axios"
+
+export type VoteFormData = {
+  rating: number
+  mission: string
+  needs: string
+  email: string
+}
 
 const Home: NextPage<{ organization: Organization | null; votes: Vote[] }> = (
   props
 ) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm()
+  const { register, handleSubmit } = useForm<VoteFormData>()
+  const [saving, setSaving] = useState<boolean>(false)
 
-  const onSubmit = (data: any) => console.log(data)
+  const onSubmit = (data: VoteFormData) => {
+    setSaving(true)
+    const url = (process.env.NEXT_PUBLIC_URL || "") + "/api/vote"
+
+    axios
+      .post(url, data)
+      .then((response) => {
+        console.log("response :>>", response)
+      })
+      .finally(() => setSaving(false))
+  }
 
   return (
     <BasicLayout title={`Organization: ${props.organization?.name}`}>
@@ -96,6 +110,7 @@ const Home: NextPage<{ organization: Organization | null; votes: Vote[] }> = (
         </div>
 
         <input
+          disabled={saving}
           type="submit"
           className="mt-4 inline-flex items-center rounded border border-transparent bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           value={"Vote"}
@@ -125,11 +140,11 @@ const Home: NextPage<{ organization: Organization | null; votes: Vote[] }> = (
 
 export default Home
 
-export async function getServerSideProps(context: any) {
-  const slug = context.params.slug
-  const organization = (await getOrganizationByName(slug)) || null
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const id = Number(context.params?.id)
+  const organization = (await getOrganizationById(id)) || null
 
-  const votes: Vote[] = await getVotesByOrganizationName(slug)
+  const votes: Vote[] = await getVotesByOrganizationId(id)
 
   return {
     props: {

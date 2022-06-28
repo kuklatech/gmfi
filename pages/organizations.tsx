@@ -21,7 +21,9 @@ const Home: NextPage<{ organizations: any }> = (props) => {
 
       <ul className="mt-8">
         {props.organizations.map((organization: any) => (
-          <li key={organization.name}><a href={`/organization/${organization.name}`}>{organization.name}</a></li>
+          <li key={organization.name}>
+            <a href={`/organization/${organization.id}`}>{organization.name}</a>
+          </li>
         ))}
       </ul>
     </BasicLayout>
@@ -31,9 +33,11 @@ const Home: NextPage<{ organizations: any }> = (props) => {
 export default Home
 
 export async function getServerSideProps(context: any) {
+  const organizations = await getOrganizations()
+
   return {
     props: {
-      organizations: await getOrganizations(),
+      organizations,
     },
   }
 }
