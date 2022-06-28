@@ -1,8 +1,11 @@
 import { query } from "./neo4j"
+import { VoteFormData } from "../../pages/organization/[id]"
+import { OrganizationFormData } from "../../pages/organizations"
 
 export type Organization = {
   id: number
   name: string
+  website: string
 }
 
 export type Vote = {
@@ -10,6 +13,10 @@ export type Vote = {
   rating: number
   mission: string
   needs: string
+}
+
+export type User = {
+  email: string
 }
 
 export const getOrganizations = async (): Promise<Organization[]> => {
@@ -71,9 +78,14 @@ export const getVotesByOrganizationId = async (
     return result.records.map((record: any) => {
       const item = record.get(0)
 
+      const rating =
+        typeof item.properties.rating === "number"
+          ? item.properties.rating
+          : item.properties.rating.toInt()
+
       return {
         id: item.identity.toInt(),
-        rating: item.properties.rating.toInt(),
+        rating,
         mission: item.properties.mission,
         needs: item.properties.needs,
       }
@@ -82,18 +94,93 @@ export const getVotesByOrganizationId = async (
 }
 
 export const createVoteForOrganization = async (
-  vote: Vote,
-  organization: Organization
-): Promise<void> => {
-  return await query<void>(async (session) => {
-    await session.run(
-      "MATCH (o:Organization {name: $name}) MERGE (o)<-[vote:VOTED { rating: $rating, mission: $mission, needs: $needs }]-(u:User) RETURN vote",
+  data: VoteFormData
+): Promise<Vote | undefined> => {
+  return await query<Vote>(async (session) => {
+    const result = await session.run(
+      "MATCH (o:Organization) WHERE id(o) = $id WITH o MERGE (u:User { email: $email }) ON MATCH SET u.newsletter = $newsletter WITH o,u MERGE (o)<-[vote:VOTED { rating: $rating, mission: $mission, needs: $needs }]-(u) RETURN vote",
       {
-        name: organization.name,
-        rating: vote.rating,
-        mission: vote.mission,
-        needs: vote.mission,
+        id: data.organizationId,
+        rating: data.rating,
+        mission: data.mission,
+        needs: data.mission,
+        email: data.email,
+        newsletter: data.newsletter,
       }
     )
+
+    if (!result.records) {
+      return
+    }
+
+    const votes = result.records.map((record: any) => {
+      const item = record.get(0)
+
+      const rating =
+        typeof item.properties.rating === "number"
+          ? item.properties.rating
+          : item.properties.rating.toInt()
+
+      const vote: Vote = {
+        id: item.identity.toInt(),
+        rating,
+        mission: item.properties.mission,
+        needs: item.properties.needs,
+      }
+
+      return vote
+    })
+
+    if (votes.length > 0) {
+      return votes[0]
+    }
   })
+}
+
+export const createOrganization = async (
+  organization: OrganizationFormData
+): Promise<Organization | undefined> => {
+  return await query<Organization>(async (session) => {
+    const result = await session.run(
+      "MERGE (o:Organization { name: $name }) RETURN o",
+      {
+        name: organization.name,
+        website: organization.website,
+      }
+    )
+
+    if (!result.records) {
+      return
+    }
+
+    const organizations = result.records.map((record: any) => {
+      const item = record.get(0)
+
+      const organization: Organization = {
+        id: item.identity.toInt(),
+        name: item.properties.name,
+        website: item.properties.website,
+      }
+
+      return organization
+    })
+
+    if (organizations.length > 0) {
+      return organizations[0]
+    }
+  })
+}
+
+export const markOrganizationAsVoted = (organizationId: number) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(`organization_${organizationId}`, "1")
+  }
+}
+
+export const isOrganizationVoted = (organizationId: number) => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem(`organization_${organizationId}`) === "1"
+  }
+
+  return false
 }
