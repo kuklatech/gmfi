@@ -2,6 +2,7 @@ import { Fragment } from "react"
 import { Popover, Transition } from "@headlessui/react"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
 import Link from "next/link"
+import Head from "next/head"
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -20,6 +21,12 @@ export const BasicLayout = ({
 }) => {
   return (
     <div className="bg-white">
+      <Head>
+        <title>
+          Global Mission Fulfillment Index - who does a good job for the world?
+        </title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <header className="relative bg-sky-800 pb-24 sm:pb-32">
         <div className="absolute inset-0">
           <div
@@ -94,7 +101,7 @@ export const BasicLayout = ({
           </Transition>
         </Popover>
 
-        <div className="relative mx-auto mt-24 max-w-md px-4 sm:mt-32 sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
+        <div className="relative mx-auto mt-12 max-w-md px-4 sm:mt-16 sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
             {title}
           </h1>
@@ -104,7 +111,7 @@ export const BasicLayout = ({
       <main>
         <div
           className={
-            "mx-auto max-w-md py-24 px-4 sm:max-w-3xl sm:py-32 sm:px-6 lg:max-w-7xl lg:px-8"
+            "mx-auto max-w-md py-16 px-4 sm:max-w-3xl sm:py-16 sm:px-4 lg:max-w-7xl lg:px-8"
           }
         >
           {children}

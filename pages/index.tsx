@@ -24,7 +24,7 @@ const Home: NextPage = () => {
                 <p className="text-warm-gray-500 mt-4 text-lg">
                   1.{" "}
                   <Link href={"/organizations"}>
-                    <a className={"underline"} href="#">
+                    <a className={"underline"} href="/organizations">
                       Find or add an organization
                     </a>
                   </Link>

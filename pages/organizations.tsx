@@ -17,17 +17,17 @@ const Home: NextPage<{ organizations: any }> = (props) => {
     <BasicLayout title={"Organizations"}>
       <NewOrganizationForm />
 
-      <p className={"text-lead mt-8 text-2xl"}>
+      <h2 className={"text-lead mt-8 text-3xl"}>
         Choose an organization from the list
-      </p>
+      </h2>
 
-      <ul className="mt-8">
+      <ol className="mt-8 list-decimal pl-8">
         {props.organizations.map((organization: any) => (
-          <li key={organization.name}>
+          <li key={organization.name} className={"my-4 border-b pb-4"}>
             <a href={`/organization/${organization.id}`}>{organization.name}</a>
           </li>
         ))}
-      </ul>
+      </ol>
     </BasicLayout>
   )
 }
@@ -61,6 +61,7 @@ export const NewOrganizationForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <h2 className={"text-lead mt-8 text-3xl"}>Add a new organization</h2>
       <div className="mt-4">
         <label
           htmlFor="name"
