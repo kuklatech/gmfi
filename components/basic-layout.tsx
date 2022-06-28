@@ -50,10 +50,7 @@ export const BasicLayout = ({
             <div className="hidden space-x-10 lg:ml-10 lg:flex">
               {navigation.map((item) => (
                 <Link href={item.href} key={item.name}>
-                  <a
-                    href="#"
-                    className="text-base font-medium text-white hover:text-cyan-100"
-                  >
+                  <a className="text-base font-medium text-white hover:text-cyan-100">
                     {item.name}
                   </a>
                 </Link>
@@ -86,13 +83,11 @@ export const BasicLayout = ({
                 <div className="pt-5 pb-6">
                   <div className="space-y-1 px-2">
                     {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className="text-warm-gray-900 hover:bg-warm-gray-50 block rounded-md px-3 py-2 text-base font-medium"
-                      >
-                        {item.name}
-                      </a>
+                      <Link href={item.href} key={item.name}>
+                        <a className="text-warm-gray-900 hover:bg-warm-gray-50 block rounded-md px-3 py-2 text-base font-medium">
+                          {item.name}
+                        </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -140,12 +135,11 @@ export const BasicLayout = ({
                   <ul role="list" className="mt-4 space-y-4">
                     {footerNavigation.legal.map((item) => (
                       <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className="text-warm-gray-500 hover:text-warm-gray-900 text-base"
-                        >
-                          {item.name}
-                        </a>
+                        <Link href={item.href}>
+                          <a className="text-warm-gray-500 hover:text-warm-gray-900 text-base">
+                            {item.name}
+                          </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>

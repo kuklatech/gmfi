@@ -24,7 +24,9 @@ const Home: NextPage<{ organizations: any }> = (props) => {
       <ol className="mt-8 list-decimal pl-8">
         {props.organizations.map((organization: any) => (
           <li key={organization.name} className={"my-4 border-b pb-4"}>
-            <a href={`/organization/${organization.id}`}>{organization.name}</a>
+            <Link href={`/organization/${organization.id}`}>
+              <a>{organization.name}</a>
+            </Link>
           </li>
         ))}
       </ol>

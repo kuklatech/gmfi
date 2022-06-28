@@ -24,9 +24,7 @@ const Home: NextPage = () => {
                 <p className="text-warm-gray-500 mt-4 text-lg">
                   1.{" "}
                   <Link href={"/organizations"}>
-                    <a className={"underline"} href="/organizations">
-                      Find or add an organization
-                    </a>
+                    <a className={"underline"}>Find or add an organization</a>
                   </Link>
                   , that you think is doing anything good for the world. It can
                   be any company, NGO, or institution. The one you work for, buy
