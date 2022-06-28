@@ -179,7 +179,8 @@ export const markOrganizationAsVoted = (organizationId: number) => {
 
 export const isOrganizationVoted = (organizationId: number) => {
   if (typeof window !== "undefined") {
-    return localStorage.getItem(`organization_${organizationId}`) === "1"
+    const item = localStorage.getItem(`organization_${organizationId}`)
+    return item === "1"
   }
 
   return false
