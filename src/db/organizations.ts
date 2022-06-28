@@ -103,7 +103,7 @@ export const createVoteForOrganization = async (
         id: data.organizationId,
         rating: data.rating,
         mission: data.mission,
-        needs: data.mission,
+        needs: data.needs,
         email: data.email,
         newsletter: data.newsletter,
       }
