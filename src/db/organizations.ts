@@ -9,6 +9,11 @@ export type Organization = {
   website: string
 }
 
+export type OrganizationWithMissions = {
+  organization: Organization
+  missions: Mission[]
+}
+
 export type Vote = {
   id: number
   howFillsMission: string
@@ -40,6 +45,45 @@ export const getOrganizations = async (): Promise<Organization[]> => {
   return organizations
 }
 
+export const getOrganizationsWithMissions = async (): Promise<
+  OrganizationWithMissions[]
+> => {
+  const organizations = await query<OrganizationWithMissions[]>(
+    async (session) => {
+      const result = await session.run(
+        "MATCH (o:Organization) " +
+          "WITH o " +
+          "OPTIONAL MATCH (o)-[:FILLS]->(m:Mission) RETURN o, collect(m) as missions"
+      )
+
+      const organizations: OrganizationWithMissions[] = result.records.map(
+        (record: any) => {
+          const organizationNode = record.get(0)
+          const missionNodes = record.get(1)
+
+          const organization: Organization = {
+            id: organizationNode.identity.toInt(),
+            name: organizationNode.properties.name,
+            website: organizationNode.properties.website || "",
+          }
+
+          const missions: Mission[] = (missionNodes || []).map(
+            (missionNode: any) => ({
+              name: missionNode.properties.name,
+            })
+          )
+
+          return { organization, missions }
+        }
+      )
+
+      return organizations
+    }
+  )
+
+  return organizations
+}
+
 export const getOrganizationById = async (
   id: number
 ): Promise<Organization | undefined> => {
@@ -55,7 +99,7 @@ export const getOrganizationById = async (
       return {
         id: item.identity.toInt(),
         name: item.properties.name,
-        website: item.properties.website,
+        website: item.properties.website || "",
       }
     })
 
@@ -169,7 +213,7 @@ export const createOrganization = async (
 ): Promise<Organization | undefined> => {
   return await query<Organization>(async (session) => {
     const result = await session.run(
-      "MATCH (m:Mission { name: $missionName }) MERGE (o:Organization { name: $name })-[:FILLS]->(m) RETURN o",
+      "MATCH (m:Mission { name: $missionName }) MERGE (o:Organization { name: $name, website: $website })-[:FILLS]->(m) RETURN o",
       {
         name: data.name,
         missionName: data.missionName,

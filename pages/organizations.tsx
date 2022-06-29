@@ -1,9 +1,14 @@
 import type { NextPage } from "next"
 import Link from "next/link"
 import { BasicLayout } from "../components/basic-layout"
-import { getOrganizations } from "../src/db/organizations"
+import {
+  getOrganizationsWithMissions,
+  OrganizationWithMissions,
+} from "../src/db/organizations"
 
-const Home: NextPage<{ organizations: any }> = (props) => {
+const Home: NextPage<{ organizations: OrganizationWithMissions[] }> = (
+  props
+) => {
   return (
     <BasicLayout title={"Organizations"}>
       <Link href={"/organizations/add"}>
@@ -13,13 +18,23 @@ const Home: NextPage<{ organizations: any }> = (props) => {
       </Link>
 
       <ol className="mt-8 list-decimal pl-8">
-        {props.organizations.map((organization: any) => (
-          <li key={organization.name} className={"my-4 border-b pb-4"}>
-            <Link href={`/organization/${organization.id}`}>
-              <a>{organization.name}</a>
-            </Link>
-          </li>
-        ))}
+        {props.organizations.map(({ organization, missions }) => {
+          const missionsNames = missions.map((mission) => mission.name)
+          return (
+            <li key={organization.name} className={"my-4 border-b pb-4"}>
+              <Link href={`/organization/${organization.id}`}>
+                <a className="flex flex-col">
+                  <span>{organization.name}</span>
+                  {missionsNames.length > 0 && (
+                    <span className={"text-sm text-gray-800"}>
+                      Mission: {missionsNames.join(", ")}
+                    </span>
+                  )}
+                </a>
+              </Link>
+            </li>
+          )
+        })}
       </ol>
     </BasicLayout>
   )
@@ -28,7 +43,7 @@ const Home: NextPage<{ organizations: any }> = (props) => {
 export default Home
 
 export async function getServerSideProps(context: any) {
-  const organizations = await getOrganizations()
+  const organizations = await getOrganizationsWithMissions()
 
   return {
     props: {
