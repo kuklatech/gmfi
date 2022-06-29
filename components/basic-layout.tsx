@@ -125,8 +125,8 @@ export const BasicLayout = ({
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
             <div className="space-y-8 xl:col-span-1">
               <p className="text-warm-gray-500 text-base">
-                Making the world a better place through sharing information
-                about initiatives doing a good job for the world.
+                Our mission is to inspire and help people contribute to the
+                positive change for the world.
               </p>
             </div>
             <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
