@@ -171,7 +171,7 @@ export const createVoteForOrganization = async (
 ): Promise<Vote | undefined> => {
   return await query<Vote>(async (session) => {
     const result = await session.run(
-      "MATCH (o:Organization) WHERE id(o) = $id WITH o MERGE (u:User { email: $email }) ON MATCH SET u.newsletter = $newsletter WITH o,u MERGE (o)<-[vote:VOTED { rating: $rating, howFillsMission: $howFillsMission }]-(u) RETURN vote",
+      "MATCH (o:Organization) WHERE id(o) = $id WITH o MERGE (u:User { email: $email }) ON MATCH SET u.newsletter = $newsletter WITH o,u MERGE (o)<-[vote:VOTED { rating: $rating, howFillsMission: $howFillsMission, createdAt: datetime() }]-(u) RETURN vote",
       {
         id: data.organizationId,
         rating: data.rating,
@@ -213,7 +213,7 @@ export const createOrganization = async (
 ): Promise<Organization | undefined> => {
   return await query<Organization>(async (session) => {
     const result = await session.run(
-      "MATCH (m:Mission { name: $missionName }) MERGE (o:Organization { name: $name, website: $website })-[:FILLS]->(m) RETURN o",
+      "MATCH (m:Mission { name: $missionName }) MERGE (o:Organization { name: $name, website: $website, createdAt: datetime() })-[:FILLS]->(m) RETURN o",
       {
         name: data.name,
         missionName: data.missionName,
