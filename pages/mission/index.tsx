@@ -17,9 +17,7 @@ const Home: NextPage<{ missions: Mission[] }> = (props) => {
       <ul className="mt-8 list-disc pl-8">
         {props.missions.map((mission) => (
           <li key={mission.name} className={"my-4 border-b pb-4"}>
-            <Link href={`/mission/${mission.id}`}>
-              <a>{mission.name}</a>
-            </Link>
+            {mission.name}
           </li>
         ))}
       </ul>

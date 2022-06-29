@@ -12,10 +12,6 @@ const Home: NextPage<{ organizations: any }> = (props) => {
         </a>
       </Link>
 
-      <h2 className={"text-lead mt-8 text-3xl"}>
-        Choose an organization from the list
-      </h2>
-
       <ol className="mt-8 list-decimal pl-8">
         {props.organizations.map((organization: any) => (
           <li key={organization.name} className={"my-4 border-b pb-4"}>
