@@ -1,48 +1,57 @@
 import type { NextPage } from "next"
 import Link from "next/link"
 import { BasicLayout } from "../components/basic-layout"
+import { ContentSection } from "../components/organisms/ContentSection/ContentSection"
+import Image from "next/image"
 
 const Home: NextPage = () => {
   return (
     <BasicLayout title={"Global Mission Fulfillment Index"}>
-      <p className={"text-lead text-2xl"}>
-        Our goal is to list all the companies and organizations that do a good
-        job for the world so anyone can see what they’re doing and how to help
-        them do more good.
-      </p>
+      <ContentSection title={"Our mission"}>
+        <p className={"text-lead text-2xl"}>
+          Our mission is to inspire and help people contribute to the positive
+          change for the world.
+        </p>
+      </ContentSection>
 
-      <div className="bg-warm-gray-50">
-        <div className="mx-auto max-w-md py-24 px-4 sm:max-w-3xl sm:py-32 sm:px-6 lg:max-w-7xl lg:px-8">
-          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-            <div>
-              <h2 className="text-warm-gray-900 text-3xl font-extrabold">
-                How to participate?
-              </h2>
-            </div>
-            <div className="mt-12 lg:col-span-2 lg:mt-0">
-              <div className="space-y-12">
-                <p className="text-warm-gray-500 mt-4 text-lg">
-                  1.{" "}
-                  <Link href={"/organizations"}>
-                    <a className={"underline"}>Find or add an organization</a>
-                  </Link>
-                  , that you think is doing anything good for the world. It can
-                  be any company, NGO, or institution. The one you work for, buy
-                  products or services from, or the one you simply know about.
-                </p>
-                <p className="text-warm-gray-500 mt-4 text-lg">
-                  2. Describe what it is doing that you consider to be a good
-                  thing and what would they need to do more good.
-                </p>
-                <p className="text-warm-gray-500 mt-4 text-lg">
-                  3. Ask your friends to share their thoughts about this
-                  company.
-                </p>
-              </div>
-            </div>
-          </div>
+      <ContentSection title={"What we do?"}>
+        <p className={"text-lead text-2xl"}>
+          We create a mission graph and a list of all the companies and
+          organizations that do a good job for the world so anyone can see what
+          they’re doing and how to help them do more good.
+        </p>
+        <p className={"text-lead my-4 pb-4 text-xl"}>
+          Here&apos;s an example of a mission graph contributing to stopping
+          global warming
+        </p>
+        <div className={"mt-4"}>
+          <Image
+            src="/stop-global-warming.png"
+            alt="Stop global warning mission graph"
+            width={2475}
+            height={2949}
+          />
         </div>
-      </div>
+      </ContentSection>
+
+      <ContentSection title={"How to participate?"}>
+        <p className="text-warm-gray-500 mt-4 text-lg">
+          1.{" "}
+          <Link href={"/organizations"}>
+            <a className={"underline"}>Find or add an organization</a>
+          </Link>
+          , that you think is doing anything good for the world. It can be any
+          company, NGO, or institution. The one you work for, buy products or
+          services from, or the one you simply know about.
+        </p>
+        <p className="text-warm-gray-500 mt-4 text-lg">
+          2. Describe what it is doing that you consider to be a good thing and
+          what would they need to do more good.
+        </p>
+        <p className="text-warm-gray-500 mt-4 text-lg">
+          3. Ask your friends to share their thoughts about this organization.
+        </p>
+      </ContentSection>
 
       <Faq />
     </BasicLayout>

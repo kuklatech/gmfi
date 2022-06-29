@@ -8,6 +8,8 @@ const navigation = [
   { name: "Home", href: "/" },
   { name: "Organizations", href: "/organizations" },
   { name: "Add organization", href: "/organizations/add" },
+  { name: "Mission graph", href: "/mission" },
+  { name: "Roadmap", href: "/roadmap" },
 ]
 const footerNavigation = {
   legal: [{ name: "Privacy", href: "/privacy-policy" }],

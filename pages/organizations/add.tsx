@@ -8,7 +8,7 @@ import { useRouter } from "next/router"
 
 const Home: NextPage<{ organizations: any }> = (props) => {
   return (
-    <BasicLayout title={"Organizations"}>
+    <BasicLayout title={"Add a new organization"}>
       <NewOrganizationForm />
     </BasicLayout>
   )
