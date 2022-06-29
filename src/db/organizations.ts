@@ -11,9 +11,10 @@ export type Organization = {
 
 export type Vote = {
   id: number
+  howFillsMission: string
   rating: number
-  mission: string
-  needs: string
+  // mission: string
+  // needs: string
 }
 
 export type User = {
@@ -85,12 +86,13 @@ export const getVotesByOrganizationId = async (
           ? item.properties.rating
           : item.properties.rating.toInt()
 
-      return {
+      const vote: Vote = {
         id: item.identity.toInt(),
         rating,
-        mission: item.properties.mission,
-        needs: item.properties.needs,
+        howFillsMission: item.properties.howFillsMission || "",
       }
+
+      return vote
     })
   })
 }
@@ -125,12 +127,11 @@ export const createVoteForOrganization = async (
 ): Promise<Vote | undefined> => {
   return await query<Vote>(async (session) => {
     const result = await session.run(
-      "MATCH (o:Organization) WHERE id(o) = $id WITH o MERGE (u:User { email: $email }) ON MATCH SET u.newsletter = $newsletter WITH o,u MERGE (o)<-[vote:VOTED { rating: $rating, mission: $mission, needs: $needs }]-(u) RETURN vote",
+      "MATCH (o:Organization) WHERE id(o) = $id WITH o MERGE (u:User { email: $email }) ON MATCH SET u.newsletter = $newsletter WITH o,u MERGE (o)<-[vote:VOTED { rating: $rating, howFillsMission: $howFillsMission }]-(u) RETURN vote",
       {
         id: data.organizationId,
         rating: data.rating,
-        mission: data.mission,
-        needs: data.needs,
+        howFillsMission: data.howFillsMission,
         email: data.email,
         newsletter: data.newsletter,
       }
@@ -151,8 +152,7 @@ export const createVoteForOrganization = async (
       const vote: Vote = {
         id: item.identity.toInt(),
         rating,
-        mission: item.properties.mission,
-        needs: item.properties.needs,
+        howFillsMission: item.properties.howFillsMission,
       }
 
       return vote

@@ -22,12 +22,12 @@ import {
   TwitterShareButton,
 } from "react-share"
 import { Mission } from "../../src/db/mission"
+import { useRouter } from "next/router"
 
 export type VoteFormData = {
   organizationId: number
   rating: number
-  mission: string
-  needs: string
+  howFillsMission: string
   email: string
   newsletter: boolean
 }
@@ -41,6 +41,8 @@ const Home: NextPage<{
   const [saving, setSaving] = useState<boolean>(false)
   const [isModalOpened, setModalOpened] = useState<boolean>(false)
   const [showForm, setShowForm] = useState<boolean>(false)
+  const [copiedToClipboard, setCopiedToClipboard] = useState<boolean>(false)
+  const router = useRouter()
 
   const organizationId = Number(props.organization?.id)
 
@@ -78,7 +80,9 @@ const Home: NextPage<{
   const copyToClipboardMessage = `${organizationProfileUrl} ${message}`
 
   const copyShareLinkButtonClicked = () =>
-    navigator.clipboard.writeText(copyToClipboardMessage)
+    navigator.clipboard
+      .writeText(copyToClipboardMessage)
+      .then(() => setCopiedToClipboard(true))
 
   return (
     <BasicLayout
@@ -116,13 +120,12 @@ const Home: NextPage<{
                 htmlFor="mission"
                 className="block text-xl font-medium text-gray-700"
               >
-                What is this organization&apos;s mission? What is they doing
-                good for the world?
+                What is this organization doing to fill their mission?
               </label>
               <div className="mt-1">
                 <input
                   type="text"
-                  {...register("mission")}
+                  {...register("howFillsMission")}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   placeholder="e.g. preventing climate change"
                 />
@@ -143,27 +146,11 @@ const Home: NextPage<{
               <div className="mt-1">
                 <input
                   type="number"
+                  min={1}
+                  max={10}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   placeholder="from 1 to 10"
                   {...register("rating")}
-                />
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <label
-                htmlFor="needs"
-                className="block text-xl font-medium text-gray-700"
-              >
-                What does this organization need in order to do the job even
-                better?
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  {...register("needs")}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder="e.g. people, money, government's support, etc."
                 />
               </div>
             </div>
@@ -225,14 +212,11 @@ const Home: NextPage<{
       {props.votes.map((vote) => (
         <div key={vote.id} className={"my-8 border-t pt-8"}>
           <dl>
-            <dt className="mt-2 font-bold">What is the mission?</dt>
-            <dl>{vote.mission}</dl>
+            <dt className="mt-2 font-bold">How is it filling its mission?</dt>
+            <dl>{vote.howFillsMission}</dl>
 
             <dt className="mt-2 font-bold">How well is doing its job?</dt>
             <dl>{vote.rating}/10</dl>
-
-            <dt className="mt-2 font-bold">What does it need to do better?</dt>
-            <dl>{vote.needs}</dl>
           </dl>
         </div>
       ))}
@@ -275,8 +259,8 @@ const Home: NextPage<{
                         as="h3"
                         className="text-lg font-medium leading-6 text-gray-900"
                       >
-                        Thanks! Now share it and find out what your friends
-                        think about it.
+                        Thank you for your contribution! Now share it and find
+                        out what your friends think about it.
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-left text-sm text-gray-500">
@@ -362,7 +346,12 @@ const Home: NextPage<{
                           </FacebookShareButton>
 
                           <span
-                            className="inline-flex cursor-pointer items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            className={
+                              "inline-flex cursor-pointer items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" +
+                              (copiedToClipboard
+                                ? " border-2 border-green-700"
+                                : "")
+                            }
                             onClick={copyShareLinkButtonClicked}
                           >
                             <svg
@@ -395,7 +384,10 @@ const Home: NextPage<{
                     <button
                       type="button"
                       className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
-                      onClick={() => setModalOpened(false)}
+                      onClick={() => {
+                        setModalOpened(false)
+                        router.reload()
+                      }}
                     >
                       Go back
                     </button>
