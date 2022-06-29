@@ -1,4 +1,4 @@
-import { query } from "./neo4j"
+import { query, Session } from "./neo4j"
 import { VoteFormData } from "../../pages/organization/[id]"
 import { OrganizationFormData } from "../../pages/organizations/add"
 import { Mission } from "./mission"
@@ -45,15 +45,38 @@ export const getOrganizations = async (): Promise<Organization[]> => {
   return organizations
 }
 
-export const getOrganizationsWithMissions = async (): Promise<
-  OrganizationWithMissions[]
-> => {
+async function getOrganizationsWithMissionsRawResult(
+  session: Session,
+  missionId?: number
+) {
+  if (missionId !== undefined && !isNaN(missionId)) {
+    const result = await session.run(
+      "MATCH (o:Organization) " +
+        "WITH o " +
+        "MATCH (o)-[:FILLS|CONTRIBUTES_TO*1..]->(m:Mission) WHERE id(m) = $missionId RETURN o, collect(m) as missions",
+      { missionId }
+    )
+
+    return result
+  }
+
+  const result = await session.run(
+    "MATCH (o:Organization) " +
+      "WITH o " +
+      "OPTIONAL MATCH (o)-[:FILLS]->(m:Mission) RETURN o, collect(m) as missions"
+  )
+
+  return result
+}
+
+export const getOrganizationsWithMissions = async (
+  missionId?: number
+): Promise<OrganizationWithMissions[]> => {
   const organizations = await query<OrganizationWithMissions[]>(
     async (session) => {
-      const result = await session.run(
-        "MATCH (o:Organization) " +
-          "WITH o " +
-          "OPTIONAL MATCH (o)-[:FILLS]->(m:Mission) RETURN o, collect(m) as missions"
+      const result = await getOrganizationsWithMissionsRawResult(
+        session,
+        missionId
       )
 
       const organizations: OrganizationWithMissions[] = result.records.map(
@@ -158,6 +181,7 @@ export const getMissionsByOrganizationId = async (
       const item = record.get(0)
 
       const mission: Mission = {
+        id: item.identity.toInt(),
         name: item.properties.name,
       }
 

@@ -1,9 +1,10 @@
-const neo4j = require("neo4j-driver")
+import neo4j from "neo4j-driver"
+export { Session } from "neo4j-driver"
 
 export const connect = () => {
   const driver = neo4j.driver(
-    process.env.GRAPH_DB_URI,
-    neo4j.auth.basic("neo4j", process.env.GRAPH_DB_PASS)
+    process.env.GRAPH_DB_URI || "",
+    neo4j.auth.basic("neo4j", process.env.GRAPH_DB_PASS || "")
   )
   const session = driver.session()
 

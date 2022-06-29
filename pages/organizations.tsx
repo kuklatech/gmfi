@@ -5,10 +5,36 @@ import {
   getOrganizationsWithMissions,
   OrganizationWithMissions,
 } from "../src/db/organizations"
+import { getMissions, Mission } from "../src/db/mission"
+import Select, { SingleValue } from "react-select"
+import { GetServerSideProps } from "next"
+import { useRouter } from "next/router"
 
-const Home: NextPage<{ organizations: OrganizationWithMissions[] }> = (
-  props
-) => {
+const Home: NextPage<{
+  organizations: OrganizationWithMissions[]
+  missions: Mission[]
+}> = (props) => {
+  const router = useRouter()
+  const missionFilter = Number(router.query.mission)
+
+  const missionsOptions = props.missions.map((mission) => ({
+    value: mission.id,
+    label: mission.name,
+  }))
+  const selectedMission = missionsOptions.find(
+    (mission) => mission.value === missionFilter
+  )
+
+  const selectMission = (
+    option: SingleValue<{ value: number; label: string }>
+  ) => {
+    if (option) {
+      return router.push(`/organizations?mission=${option.value}`)
+    } else {
+      return router.push("/organizations")
+    }
+  }
+
   return (
     <BasicLayout title={"Organizations"}>
       <Link href={"/organizations/add"}>
@@ -17,9 +43,21 @@ const Home: NextPage<{ organizations: OrganizationWithMissions[] }> = (
         </a>
       </Link>
 
+      <div className={"mt-4"}>
+        <h2 className={"text-xl"}>Filter by mission</h2>
+        <Select
+          instanceId={"missions-filter"}
+          options={missionsOptions}
+          onChange={selectMission}
+          defaultValue={selectedMission}
+          isClearable
+        ></Select>
+      </div>
+
       <ol className="mt-8 list-decimal pl-8">
         {props.organizations.map(({ organization, missions }) => {
           const missionsNames = missions.map((mission) => mission.name)
+
           return (
             <li key={organization.name} className={"my-4 border-b pb-4"}>
               <Link href={`/organization/${organization.id}`}>
@@ -42,12 +80,15 @@ const Home: NextPage<{ organizations: OrganizationWithMissions[] }> = (
 
 export default Home
 
-export async function getServerSideProps(context: any) {
-  const organizations = await getOrganizationsWithMissions()
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const missionFilter = Number(context.query.mission)
+  const organizations = await getOrganizationsWithMissions(missionFilter)
+  const missions = await getMissions()
 
   return {
     props: {
       organizations,
+      missions,
     },
   }
 }
