@@ -1,10 +1,10 @@
 import type { GetServerSideProps, NextPage } from "next"
 import { BasicLayout } from "../../components/basic-layout"
 import {
+  getMissionsByOrganizationId,
   getOrganizationById,
   getVotesByOrganizationId,
   isOrganizationVoted,
-  markOrganizationAsVoted,
   Organization,
   Vote,
 } from "../../src/db/organizations"
@@ -21,6 +21,7 @@ import {
   TelegramShareButton,
   TwitterShareButton,
 } from "react-share"
+import { Mission } from "../../src/db/mission"
 
 export type VoteFormData = {
   organizationId: number
@@ -31,9 +32,11 @@ export type VoteFormData = {
   newsletter: boolean
 }
 
-const Home: NextPage<{ organization: Organization | null; votes: Vote[] }> = (
-  props
-) => {
+const Home: NextPage<{
+  organization: Organization | null
+  missions: Mission[]
+  votes: Vote[]
+}> = (props) => {
   const { register, handleSubmit } = useForm<VoteFormData>()
   const [saving, setSaving] = useState<boolean>(false)
   const [isModalOpened, setModalOpened] = useState<boolean>(false)
@@ -78,7 +81,32 @@ const Home: NextPage<{ organization: Organization | null; votes: Vote[] }> = (
     navigator.clipboard.writeText(copyToClipboardMessage)
 
   return (
-    <BasicLayout title={`Organization: ${props.organization?.name}`}>
+    <BasicLayout
+      title={`Organization: ${props.organization?.name}`}
+      subtitle={
+        <div className="mt-4">
+          <div className="mt-2">
+            <span className="text-xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-3xl">
+              Mission:{" "}
+              {props.missions.map((mission) => mission.name).join(", ")}
+            </span>
+          </div>
+          <div className="mt-2">
+            <span className="text-xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-3xl">
+              Website:{" "}
+              {props.organization?.website && (
+                <a
+                  rel="nofollow noindex ugc"
+                  href={props.organization?.website}
+                >
+                  {props.organization?.website}
+                </a>
+              )}
+            </span>
+          </div>
+        </div>
+      }
+    >
       {showForm && (
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -388,11 +416,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const organization = (await getOrganizationById(id)) || null
 
   const votes: Vote[] = await getVotesByOrganizationId(id)
+  const missions: Mission[] = await getMissionsByOrganizationId(id)
 
   return {
     props: {
       organization,
       votes,
+      missions,
     },
   }
 }

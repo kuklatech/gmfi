@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import { createOrganization } from "../../../src/db/organizations"
-import { OrganizationFormData } from "../../organizations"
+import { OrganizationFormData } from "../../organizations/add"
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const data: OrganizationFormData = req.body

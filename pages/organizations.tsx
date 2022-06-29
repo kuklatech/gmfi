@@ -31,11 +31,6 @@ const Home: NextPage<{ organizations: any }> = (props) => {
 
 export default Home
 
-export type OrganizationFormData = {
-  name: string
-  website: string
-}
-
 export async function getServerSideProps(context: any) {
   const organizations = await getOrganizations()
 

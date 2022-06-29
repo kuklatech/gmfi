@@ -17,9 +17,11 @@ const footerNavigation = {
 
 export const BasicLayout = ({
   title,
+  subtitle,
   children,
 }: {
   title: string
+  subtitle?: JSX.Element
   children: any
 }) => {
   return (
@@ -103,6 +105,7 @@ export const BasicLayout = ({
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
             {title}
           </h1>
+          {subtitle}
         </div>
       </header>
 

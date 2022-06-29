@@ -1,6 +1,7 @@
 import { query } from "./neo4j"
 import { VoteFormData } from "../../pages/organization/[id]"
-import { OrganizationFormData } from "../../pages/organizations"
+import { OrganizationFormData } from "../../pages/organizations/add"
+import { Mission } from "./mission"
 
 export type Organization = {
   id: number
@@ -53,6 +54,7 @@ export const getOrganizationById = async (
       return {
         id: item.identity.toInt(),
         name: item.properties.name,
+        website: item.properties.website,
       }
     })
 
@@ -89,6 +91,31 @@ export const getVotesByOrganizationId = async (
         mission: item.properties.mission,
         needs: item.properties.needs,
       }
+    })
+  })
+}
+
+export const getMissionsByOrganizationId = async (
+  organizationId: number
+): Promise<Mission[]> => {
+  return await query<Mission[]>(async (session) => {
+    const result = await session.run(
+      "MATCH (o:Organization)-[:FILLS]->(m:Mission) WHERE id(o) = $id RETURN m",
+      { id: organizationId }
+    )
+
+    if (!result.records) {
+      return []
+    }
+
+    return result.records.map((record: any) => {
+      const item = record.get(0)
+
+      const mission: Mission = {
+        name: item.properties.name,
+      }
+
+      return mission
     })
   })
 }
@@ -138,14 +165,15 @@ export const createVoteForOrganization = async (
 }
 
 export const createOrganization = async (
-  organization: OrganizationFormData
+  data: OrganizationFormData
 ): Promise<Organization | undefined> => {
   return await query<Organization>(async (session) => {
     const result = await session.run(
-      "MERGE (o:Organization { name: $name }) RETURN o",
+      "MATCH (m:Mission { name: $missionName }) MERGE (o:Organization { name: $name })-[:FILLS]->(m) RETURN o",
       {
-        name: organization.name,
-        website: organization.website,
+        name: data.name,
+        missionName: data.missionName,
+        website: data.website,
       }
     )
 

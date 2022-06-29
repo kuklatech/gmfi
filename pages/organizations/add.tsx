@@ -1,15 +1,17 @@
 import type { NextPage } from "next"
 import { BasicLayout } from "../../components/basic-layout"
 import { getOrganizations, Organization } from "../../src/db/organizations"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { useState } from "react"
 import axios, { AxiosResponse } from "axios"
 import { useRouter } from "next/router"
+import Select from "react-select"
+import { getMissions, Mission } from "../../src/db/mission"
 
-const Home: NextPage<{ organizations: any }> = (props) => {
+const Home: NextPage<{ missions: Mission[] }> = (props) => {
   return (
     <BasicLayout title={"Add a new organization"}>
-      <NewOrganizationForm />
+      <NewOrganizationForm missions={props.missions} />
     </BasicLayout>
   )
 }
@@ -18,13 +20,19 @@ export default Home
 
 export type OrganizationFormData = {
   name: string
+  missionName: string
   website: string
 }
 
-export const NewOrganizationForm = () => {
-  const { register, handleSubmit } = useForm<OrganizationFormData>()
+export const NewOrganizationForm = (props: { missions: Mission[] }) => {
+  const { register, handleSubmit, control } = useForm<OrganizationFormData>()
   const [saving, setSaving] = useState<boolean>(false)
   const router = useRouter()
+
+  const missionsOptions = props.missions.map((mission) => ({
+    value: mission.name,
+    label: mission.name,
+  }))
 
   const onSubmit = (data: OrganizationFormData) => {
     setSaving(true)
@@ -49,7 +57,7 @@ export const NewOrganizationForm = () => {
           htmlFor="name"
           className="block text-xl font-medium text-gray-700"
         >
-          What is organization&apos;s name?
+          Name
         </label>
         <div className="mt-1">
           <input
@@ -60,12 +68,41 @@ export const NewOrganizationForm = () => {
           />
         </div>
       </div>
+
+      <div className="mt-4">
+        <label
+          htmlFor="mission"
+          className="block text-xl font-medium text-gray-700"
+        >
+          Mission
+        </label>
+        <div className="mt-1">
+          <Controller
+            name={"missionName"}
+            control={control}
+            render={({ field: { value, onChange, onBlur } }) => {
+              return (
+                <Select
+                  instanceId={"missionId"}
+                  options={missionsOptions}
+                  name={"missionId"}
+                  onChange={(options) => {
+                    onChange(options?.value)
+                  }}
+                  onBlur={onBlur}
+                ></Select>
+              )
+            }}
+          ></Controller>
+        </div>
+      </div>
+
       <div className="mt-4">
         <label
           htmlFor="website"
           className="block text-xl font-medium text-gray-700"
         >
-          What is organization&apos;s website?
+          Website
         </label>
         <div className="mt-1">
           <input
@@ -89,11 +126,11 @@ export const NewOrganizationForm = () => {
 }
 
 export async function getServerSideProps(context: any) {
-  const organizations = await getOrganizations()
+  const missions = await getMissions()
 
   return {
     props: {
-      organizations,
+      missions,
     },
   }
 }
