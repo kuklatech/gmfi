@@ -98,6 +98,7 @@ const Home: NextPage<{
                 <a
                   rel="nofollow noindex ugc"
                   href={props.organization?.website}
+                  target="_blank"
                 >
                   {props.organization?.website}
                 </a>
