@@ -15,14 +15,30 @@ const Home: NextPage = () => {
       </ContentSection>
 
       <ContentSection title={"What we do?"}>
-        <p className={"text-lead text-2xl"}>
-          We create a mission graph and a list of all the companies and
-          organizations that do a good job for the world so anyone can see what
-          they’re doing and how to help them do more good.
-        </p>
+        <p className={"text-lead text-2xl"}>We focus on two things:</p>
+        <ol className={"text-lead list-decimal text-2xl"}>
+          <li>
+            Creating a{" "}
+            <Link href={"/mission"}>
+              <a className={"underline"}>mission graph</a>
+            </Link>
+            , that shows in a clear way what actions contribute to the mission
+            that is important to you.
+          </li>
+          <li>
+            Creating a{" "}
+            <Link href={"/organizations"}>
+              <a className="underline">
+                list of all the companies and organizations
+              </a>
+            </Link>{" "}
+            that do a good job for the world. This way you will be able to find
+            out what they&apos;re doing and how to help them do more good.
+          </li>
+        </ol>
         <p className={"text-lead my-4 pb-4 text-xl"}>
           Here&apos;s an example of a mission graph contributing to stopping
-          global warming
+          global warming:
         </p>
         <div className={"mt-4"}>
           <Image
