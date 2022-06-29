@@ -41,3 +41,46 @@ export const getMissions = async (): Promise<MissionWithNoOfSubMissions[]> => {
 
   return missions
 }
+
+export type MissionSet = {
+  targetMission: Mission
+  secondMission: Mission
+  nextMission: Mission | null
+}
+
+export const getMissionsSets = async (
+  missionId: number
+): Promise<MissionSet[]> => {
+  const cypherQuery = `MATCH (targetMission:Mission)<-[:CONTRIBUTES_TO]-(secondMission:Mission)
+      WHERE id(targetMission) = $missionId
+      OPTIONAL MATCH (targetMission)-[:CONTRIBUTES_TO]->(nextMission:Mission)
+      RETURN targetMission, secondMission, nextMission`
+
+  const missions = await query<MissionSet[]>(async (session) => {
+    const result = await session.run(cypherQuery, { missionId })
+
+    const missions: MissionSet[] = result.records.map((record: any) => {
+      const targetMission = node2mission(record.get(0))
+      const secondMission = node2mission(record.get(1))
+      const nextMission = node2mission(record.get(2))
+
+      return { targetMission, secondMission, nextMission }
+    })
+
+    return missions
+  })
+
+  return missions
+}
+
+const node2mission = (node: any): Mission | null => {
+  if (!node) {
+    return null
+  }
+
+  const mission: Mission = {
+    id: node.identity.toInt(),
+    name: node.properties.name,
+  }
+  return mission
+}
