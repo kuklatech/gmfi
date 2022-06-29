@@ -96,7 +96,7 @@ const Home: NextPage<{
               Website:{" "}
               {props.organization?.website && (
                 <a
-                  rel="nofollow noindex ugc"
+                  rel="nofollow noindex ugc noreferrer"
                   href={props.organization?.website}
                   target="_blank"
                 >
