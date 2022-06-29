@@ -14,7 +14,7 @@ import axios from "axios"
 
 import { Fragment } from "react"
 import { Dialog, Transition } from "@headlessui/react"
-import { CheckIcon } from "@heroicons/react/outline"
+import { CheckIcon, GlobeIcon } from "@heroicons/react/outline"
 
 import {
   FacebookShareButton,
@@ -86,7 +86,7 @@ const Home: NextPage<{
 
   return (
     <BasicLayout
-      title={`Organization: ${props.organization?.name}`}
+      title={`${props.organization?.name}`}
       subtitle={
         <div className="mt-4">
           <div className="mt-2">
@@ -96,8 +96,11 @@ const Home: NextPage<{
             </span>
           </div>
           <div className="mt-2">
-            <span className="text-xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-3xl">
-              Website:{" "}
+            <span className="inline-flex text-xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-3xl">
+              <GlobeIcon
+                className="mr-2 h-8 w-8 text-white"
+                aria-hidden="true"
+              />{" "}
               {props.organization?.website && (
                 <a
                   rel="nofollow noindex ugc noreferrer"
@@ -115,6 +118,7 @@ const Home: NextPage<{
       {showForm && (
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
+            <h2 className="text-4xl">Share your thoughts about this company</h2>
             <div className="mt-4">
               <label
                 htmlFor="mission"
@@ -127,7 +131,7 @@ const Home: NextPage<{
                   type="text"
                   {...register("howFillsMission")}
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder="e.g. preventing climate change"
+                  placeholder="e.g. using recycled materials, producing energy efficient devices, etc"
                 />
               </div>
             </div>
@@ -198,7 +202,7 @@ const Home: NextPage<{
             <input
               disabled={saving}
               type="submit"
-              className="mt-4 inline-flex items-center rounded border border-transparent bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="mt-4 inline-flex cursor-pointer items-center rounded border border-transparent bg-indigo-600 px-8 py-1.5 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               value={saving ? "saving..." : "Vote"}
             />
           </form>
@@ -207,7 +211,9 @@ const Home: NextPage<{
         </>
       )}
 
-      <h2 className="mt-8 text-2xl font-bold">Votes</h2>
+      <h2 className="mt-8 text-4xl">
+        Votes {props.votes.length > 0 && <span>({props.votes.length})</span>}
+      </h2>
 
       {props.votes.map((vote) => (
         <div key={vote.id} className={"my-8 border-t pt-8"}>

@@ -54,6 +54,14 @@ const Home: NextPage<{ missions: Mission[]; missionSets: MissionSet[] }> = (
         )}
       />
 
+      {missionId >= 0 && (
+        <div className={"mt-2"}>
+          <Link href={`/organizations?mission=${missionId}`}>
+            <a className={"underline"}>Show organizations with this mission</a>
+          </Link>
+        </div>
+      )}
+
       <Graph missionSets={props.missionSets} />
     </BasicLayout>
   )

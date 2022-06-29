@@ -8,7 +8,7 @@ const navigation = [
   { name: "Home", href: "/" },
   { name: "Organizations", href: "/organizations" },
   { name: "Add organization", href: "/organizations/add" },
-  // { name: "Mission graph", href: "/mission" },
+  { name: "Mission graph", href: "/mission" },
   { name: "Roadmap", href: "/roadmap" },
 ]
 const footerNavigation = {

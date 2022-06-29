@@ -7,10 +7,18 @@ const Home: NextPage = () => {
     <BasicLayout title={"Roadmap"}>
       <ContentSection title={"What do we plan for the upcoming future?"}>
         <ul className={"list-disc"}>
-          <li>Add user-driven mission graph management.</li>
+          <li>Add form for creating a new mission.</li>
           <li>
-            Create a dependency graph for the most common global missions
-            organizations have right now.
+            Publish information about the project for communities of
+            entrepreneurs running eco-friendly businesses.
+          </li>
+          <li>
+            Add a newsletter sign-up form on this very page. (If you want to
+            stay up-to-date let us know at{" "}
+            <a className={"underline"} href="mailto:contact@gmfindex.com">
+              contact@gmfindex.com
+            </a>
+            )
           </li>
         </ul>
       </ContentSection>
