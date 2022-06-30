@@ -96,11 +96,7 @@ const Home: NextPage<{
             </span>
           </div>
           <div className="mt-2">
-            <span className="inline-flex text-xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-3xl">
-              <GlobeIcon
-                className="mr-2 h-8 w-8 text-white"
-                aria-hidden="true"
-              />{" "}
+            <span className="inline-flex text-lg tracking-tight text-white sm:text-lg lg:text-lg">
               {props.organization?.website && (
                 <a
                   rel="nofollow noindex ugc noreferrer"
@@ -110,6 +106,11 @@ const Home: NextPage<{
                   {props.organization?.website}
                 </a>
               )}
+            </span>
+          </div>
+          <div className="mt-2">
+            <span className="text-lg tracking-tight text-white sm:text-lg lg:text-lg">
+              {props.organization?.description}
             </span>
           </div>
         </div>

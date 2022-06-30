@@ -7,6 +7,7 @@ export type Organization = {
   id: number
   name: string
   website: string
+  description: string
 }
 
 export type OrganizationWithMissions = {
@@ -36,6 +37,8 @@ export const getOrganizations = async (): Promise<Organization[]> => {
       return {
         id: item.identity.toInt(),
         name: item.properties.name,
+        website: item.properties.website || "",
+        description: item.properties.description || "",
       }
     })
 
@@ -88,6 +91,7 @@ export const getOrganizationsWithMissions = async (
             id: organizationNode.identity.toInt(),
             name: organizationNode.properties.name,
             website: organizationNode.properties.website || "",
+            description: organizationNode.properties.description || "",
           }
 
           const missions: Mission[] = (missionNodes || []).map(
@@ -119,11 +123,14 @@ export const getOrganizationById = async (
     const organizations = result.records.map((record: any) => {
       const item = record.get(0)
 
-      return {
+      const organization: Organization = {
         id: item.identity.toInt(),
         name: item.properties.name,
         website: item.properties.website || "",
+        description: item.properties.description || "",
       }
+
+      return organization
     })
 
     if (organizations.length > 0) {
@@ -237,11 +244,12 @@ export const createOrganization = async (
 ): Promise<Organization | undefined> => {
   return await query<Organization>(async (session) => {
     const result = await session.run(
-      "MATCH (m:Mission { name: $missionName }) MERGE (o:Organization { name: $name, website: $website, createdAt: datetime() })-[:FILLS]->(m) RETURN o",
+      "MATCH (m:Mission { name: $missionName }) MERGE (o:Organization { name: $name, website: $website, description: $description, createdAt: datetime() })-[:FILLS]->(m) RETURN o",
       {
         name: data.name,
         missionName: data.missionName,
         website: data.website,
+        description: data.description,
       }
     )
 
@@ -256,6 +264,7 @@ export const createOrganization = async (
         id: item.identity.toInt(),
         name: item.properties.name,
         website: item.properties.website,
+        description: item.properties.description,
       }
 
       return organization
