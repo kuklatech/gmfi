@@ -290,3 +290,42 @@ export const isOrganizationVoted = (organizationId: number) => {
 
   return false
 }
+
+export const getOrganizationByUrl = async (url: string) => {
+  return await query<OrganizationWithMissions>(async (session) => {
+    const result = await session.run(
+      "MATCH (o:Organization)-[:FILLS]->(m:Mission) WHERE o.website CONTAINS $url RETURN o, collect(m) as missions",
+      {
+        url,
+      }
+    )
+
+    const organization: OrganizationWithMissions = result.records.map(
+      (record: any) => {
+        const organizationNode = record.get(0)
+        const missionNodes = record.get(1)
+
+        const organization: Organization = {
+          id: organizationNode.identity.toInt(),
+          name: organizationNode.properties.name,
+          website: organizationNode.properties.website || "",
+          description: organizationNode.properties.description || "",
+        }
+
+        const missions: Mission[] = (missionNodes || []).map(
+          (missionNode: any) => ({
+            name: missionNode.properties.name,
+          })
+        )
+
+        return { organization, missions }
+      }
+    )
+
+    if (Array.isArray(organization) && organization.length > 0) {
+      return organization.pop()
+    }
+
+    return organization
+  })
+}
